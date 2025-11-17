@@ -23,6 +23,8 @@ export default function PlaylistsPage() {
 
   // state for playlists data
   const [playlists, setPlaylists] = useState([]);
+  // FIX: Déclaration de l'état totalCount
+  const [totalCount, setTotalCount] = useState(0);
 
   // state for loading and error
   const [loading, setLoading] = useState(true);
@@ -44,8 +46,10 @@ export default function PlaylistsPage() {
           if (!handleTokenError(res.error, navigate)) {
             setError(res.error);
           }
+        } else { // FIX ROBUSTESSE: Traiter les données UNIQUEMENT s'il n'y a pas d'erreur
+          setPlaylists(res.data.items);
+          setTotalCount(res.data.total);
         }
-        setPlaylists(res.data.items);
       })
       .catch(err => { setError(err.message); })
       .finally(() => { setLoading(false); });
@@ -54,7 +58,8 @@ export default function PlaylistsPage() {
   return (
     <section className="playlists-container page-container" aria-labelledby="playlists-title">
       <h1 id="playlists-title" className="playlists-title page-title">Your Playlists</h1>
-      <h2 className="playlists-count">{limit} Playlists</h2>
+      {/* FIX: Afficher totalCount */}
+      <h2 className="playlists-count">{totalCount} Playlists</h2>
       {loading && <output className="playlists-loading" data-testid="loading-indicator">Loading playlists…</output>}
       {error && !loading && <div className="playlists-error" role="alert">{error}</div>}
       {!loading && !error && (
