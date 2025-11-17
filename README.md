@@ -1,4 +1,5 @@
-[![Build and Test](https://github.com/jdubuy/spotify_app/actions/workflows/ci.yml/badge.svg)](https://github.com/jdubuy/spotify_app/actions/workflows/ci.yml) [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=jDubuy_spotify_app&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=alexandre-girard-maif_spotify_app)  [![Coverage](https://sonarcloud.io/api/project_badges/measure?project=alexandre-girard-maif_spotify_app&metric=coverage)](https://sonarcloud.io/summary/new_code?id=alexandre-girard-maif_spotify_app)
+[![Build and Test](https://github.com/jDubuy/spotify_app/actions/workflows/ci.yml/badge.svg)](https://github.com/jDubuy/spotify_app/actions/workflows/ci.yml) [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=jDubuy_spotify_app&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=jDubuy_spotify_app) [![Coverage](https://sonarcloud.io/api/project_badges/measure?project=jDubuy_spotify_app&metric=coverage)](https://sonarcloud.io/summary/new_code?id=jDubuy_spotify_app)
+
 
 
 # Music Discovery App
