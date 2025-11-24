@@ -1,4 +1,4 @@
-// src/pages/PlaylistsPage.test.jsx
+// src/pages/PlaylistsPage/PlaylistsPage.test.jsx
 
 import { describe, expect, test } from '@jest/globals';
 import '@testing-library/jest-dom';
@@ -16,7 +16,7 @@ const playlistsData = {
         { id: 'playlist1', name: 'My Playlist 1', images: [{ url: 'https://via.placeholder.com/56' }], owner: { display_name: 'User1' }, tracks: { total: 5 }, external_urls: { spotify: 'https://open.spotify.com/playlist/playlist1' } },
         { id: 'playlist2', name: 'My Playlist 2', images: [{ url: 'https://via.placeholder.com/56' }], owner: { display_name: 'User2' }, tracks: { total: 10 }, external_urls: { spotify: 'https://open.spotify.com/playlist/playlist2' } },
     ],
-    total: 2
+    total: 2 // Le nombre total réel dans le mock
 };
 
 // Mock token value
@@ -81,8 +81,8 @@ describe('PlaylistsPage', () => {
         const heading = await screen.findByRole('heading', { level: 1, name: 'Your Playlists' });
         expect(heading).toBeInTheDocument();
 
-        // should render heading of level 2 showing total playlist count
-        const countHeading = await screen.findByRole('heading', { level: 2, name: `${limit} Playlists` });
+        // FIX: should render heading of level 2 showing total playlist count (playlistsData.total)
+        const countHeading = await screen.findByRole('heading', { level: 2, name: `${playlistsData.total} Playlists` });
         expect(countHeading).toBeInTheDocument();
 
         // verify each playlist item rendered, don't check details here as covered in PlaylistItem tests
@@ -132,7 +132,7 @@ describe('PlaylistsPage', () => {
         await waitForLoadingToFinish();
 
         // Verify redirection to login page
-        expect(screen.getByText('Login Page')).toBeInTheDocument();
+        expect(await screen.findByText('Login Page')).toBeInTheDocument();
     });
 
     test('verify styling and accessibility attributes using role', async () => {
@@ -150,8 +150,8 @@ describe('PlaylistsPage', () => {
         const heading1 = screen.getByRole('heading', { level: 1, name: `Your Playlists` });
         expect(heading1).toHaveClass('playlists-title', 'page-title');
 
-        // should have heading level 2 with appropriate class name
-        const heading2 = screen.getByRole('heading', { level: 2, name: `${limit} Playlists` });
+        // FIX: should have heading level 2 with appropriate class name (playlistsData.total)
+        const heading2 = screen.getByRole('heading', { level: 2, name: `${playlistsData.total} Playlists` });
         expect(heading2).toHaveClass('playlists-count');
 
         // should have ordered list with appropriate class name
