@@ -13,8 +13,7 @@ import { useNavigate } from 'react-router-dom';
  */
 export const limit = 10;
 
-/** 
- * Time range for top artists
+/** * Time range for top artists
  */
 export const timeRange = 'short_term';
 
@@ -48,8 +47,9 @@ export default function TopArtistsPage() {
           if (!handleTokenError(res.error, navigate)) {
             setError(res.error);
           }
+        } else { // FIX DE ROBUSTESSE: Assure que les données sont définies uniquement en cas de succès
+          setArtists(res.data.items);
         }
-        setArtists(res.data.items);
       })
       .catch(err => { setError(err.message); })
       .finally(() => { setLoading(false); });

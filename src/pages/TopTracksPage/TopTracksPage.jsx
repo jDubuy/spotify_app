@@ -47,8 +47,9 @@ export default function TopTracksPage() {
           if (!handleTokenError(res.error, navigate)) {
             setError(res.error);
           }
+        } else { // CORRECTION: Ajout du bloc ELSE
+          setTracks(res.data.items);
         }
-        setTracks(res.data.items);
       })
       .catch(err => { setError(err.message); })
       .finally(() => { setLoading(false); });

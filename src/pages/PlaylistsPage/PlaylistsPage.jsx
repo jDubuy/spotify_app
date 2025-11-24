@@ -44,8 +44,9 @@ export default function PlaylistsPage() {
           if (!handleTokenError(res.error, navigate)) {
             setError(res.error);
           }
+        } else { // CORRECTION: Traiter les données UNIQUEMENT s'il n'y a PAS d'erreur
+          setPlaylists(res.data.items);
         }
-        setPlaylists(res.data.items);
       })
       .catch(err => { setError(err.message); })
       .finally(() => { setLoading(false); });
