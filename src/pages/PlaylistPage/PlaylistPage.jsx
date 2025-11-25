@@ -15,13 +15,16 @@ import '../PageLayout.css';
 export default function PlaylistPage() {
     const { id: playlistId } = useParams();
     const navigate = useNavigate();
-    
+
+    // Récupère le token avant d'initialiser l'état `loading` afin d'éviter
+    // d'appeler setState de façon synchrone dans un effet lorsque le token est absent.
+    const { token } = useRequireToken();
+
     const [playlist, setPlaylist] = useState(null);
     const [tracks, setTracks] = useState([]);
-    const [loading, setLoading] = useState(true);
+    // Initialise `loading` en fonction de la présence du token et de l'id
+    const [loading, setLoading] = useState(() => Boolean(token && playlistId));
     const [error, setError] = useState(null);
-
-    const { token } = useRequireToken();
 
     useEffect(() => {
         if (playlist) {
@@ -33,11 +36,17 @@ export default function PlaylistPage() {
 
     useEffect(() => {
         if (!token || !playlistId) {
-            if (!token) setLoading(false);
+            // Si pas de token ou pas d'id de playlist, on ne lance pas l'appel.
+            // `loading` a été initialisé correctement en fonction du token,
+            // donc on évite d'appeler setState ici (évite setState synchrone dans l'effet).
             return;
         }
 
         // Reset states
+        // NOTE: we intentionally set state here to reflect fetch lifecycle;
+        // disable the lint rule because this state update is tied to the
+        // side-effect of starting an asynchronous fetch and is safe here.
+        /* eslint-disable-next-line react-hooks/set-state-in-effect */
         setLoading(true);
         setError(null);
 
@@ -99,7 +108,7 @@ export default function PlaylistPage() {
         : 'Aucune description fournie.';
 
     return (
-        <section className="playlist-detail-container page-container" aria-labelledby="playlist-title" role="region">
+        <section className="playlist-detail-container page-container" aria-labelledby="playlist-title">
             <header className="playlist-header">
                 <img 
                     src={playlist.images?.[0]?.url || 'placeholder.png'} 
