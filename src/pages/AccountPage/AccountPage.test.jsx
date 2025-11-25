@@ -1,4 +1,4 @@
-// src/pages/AccountPage.test.jsx
+// src/pages/AccountPage/AccountPage.test.jsx
 
 import { describe, expect, test, beforeEach, afterEach, jest } from '@jest/globals';
 import '@testing-library/jest-dom';
@@ -142,7 +142,7 @@ describe('AccountPage', () => {
         await waitForLoadingToFinish();
 
         // Verify redirection to login page
-        expect(screen.getByText('Login Page')).toBeInTheDocument();
+        expect(await screen.findByText('Login Page')).toBeInTheDocument(); // CORRECTION ASYNCHRONE
     });
 
     test('verify styling and accessibility attributes using role', async () => {
