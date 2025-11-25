@@ -112,11 +112,25 @@ export default function PlaylistPage() {
                 const doc = new DOMParser().parseFromString(html, 'text/html');
                 return doc.body.textContent || '';
             }
-        } catch (e) {
+        } catch {
             // fallthrough to regex fallback
         }
-        // Fallback: remove tags with a safe pattern (no nested quantifiers)
-        return String(html).replace(/<\/?[^>]+(>|$)/g, '');
+        // Fallback: linear-time manual tag stripper to avoid any regex backtracking
+        let out = '';
+        let inTag = false;
+        for (let i = 0; i < html.length; i++) {
+            const ch = html[i];
+            if (inTag) {
+                if (ch === '>') inTag = false;
+            } else {
+                if (ch === '<') {
+                    inTag = true;
+                } else {
+                    out += ch;
+                }
+            }
+        }
+        return out;
     };
 
     const descriptionText = stripHtml(playlist.description) || 'Aucune description fournie.';
