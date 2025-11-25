@@ -132,7 +132,7 @@ describe('PlaylistsPage', () => {
         await waitForLoadingToFinish();
 
         // Verify redirection to login page
-        expect(screen.getByText('Login Page')).toBeInTheDocument();
+        expect(await screen.findByText('Login Page')).toBeInTheDocument();
     });
 
     test('verify styling and accessibility attributes using role', async () => {
