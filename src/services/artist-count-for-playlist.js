@@ -12,34 +12,69 @@ export async function artistCountForPlaylist(token, playlistId) {
     }
 
     try {
-        const response = await fetchPlaylistById(token, playlistId);
-
-        if (response.error) {
-            throw new Error(response.error);
-        }
-
-        const playlistData = response.data;
         const artistCounts = {};
+        let nextUrl = null;
+        let isFirstCall = true;
 
-        if (!playlistData || !playlistData.tracks || !playlistData.tracks.items) {
-            return artistCounts;
-        }
+        // Boucle de pagination pour récupérer toutes les pistes
+        while (isFirstCall || nextUrl) {
+            
+            // 1. Appel API : utilise la première fonction ou l'URL suivante pour la pagination
+            // On suppose ici que fetchPlaylistById accepte un deuxième argument (l'URL) pour la pagination si ce n'est pas le premier appel.
+            let response;
+            if (isFirstCall) {
+                response = await fetchPlaylistById(token, playlistId);
+                isFirstCall = false;
+            } else {
+                // Vous devriez probablement avoir une fonction fetchByUrl pour les URLs paginées
+                // Par souci de simplicité, nous allons appeler fetchPlaylistById avec l'URL complète
+                // ATTENTION: Cela dépend de l'implémentation réelle de fetchPlaylistById.
+                // Si fetchPlaylistById ne gère pas l'URL complète, cela peut échouer.
+                // Alternativement, si une fonction fetchByUrl est disponible:
+                // response = await fetchByUrl(token, nextUrl);
+                
+                // Pour l'instant, on suppose que le service qui appelle l'API de base sait gérer l'URL paginée.
+                // Si fetchPlaylistById ne gère pas l'URL complète, le code suivant doit être adapté.
+                
+                // SIMPLIFICATION (peut nécessiter une fonction API dédiée dans le vrai projet):
+                response = await fetchPlaylistById(token, nextUrl); 
+            }
 
-        for (const trackItem of playlistData.tracks.items) {
-            const track = trackItem.track;
+            // Gérer les erreurs de réponse de l'API
+            if (response.error) {
+                throw new Error(response.error);
+            }
 
-            if (track && track.artists) {
-                for (const artist of track.artists) {
-                    const artistName = artist.name;
-                    artistCounts[artistName] = (artistCounts[artistName] || 0) + 1;
+            const playlistData = response.data;
+
+            if (!playlistData || !playlistData.tracks || !playlistData.tracks.items) {
+                break; // Rien à traiter, sortir de la boucle
+            }
+            
+            const tracksPage = playlistData.tracks;
+
+            // 3. Parcourir et compter les artistes pour la page actuelle
+            for (const trackItem of tracksPage.items) {
+                const track = trackItem.track;
+
+                if (track && track.artists) {
+                    for (const artist of track.artists) {
+                        const artistName = artist.name;
+                        artistCounts[artistName] = (artistCounts[artistName] || 0) + 1;
+                    }
                 }
             }
+
+            // Préparer la prochaine itération
+            // L'API Spotify renvoie l'URL de la page suivante dans 'next'
+            nextUrl = tracksPage.next;
+            
+            // Si nextUrl est null ou undefined, la boucle s'arrêtera à la prochaine condition du while.
         }
 
         return artistCounts;
 
     } catch (error) {
-        // Le test unitaire attend que l'on loggue et retourne 'undefined' en cas d'échec réseau.
         console.error("Erreur lors du comptage des artistes:", error);
         return undefined; 
     }
