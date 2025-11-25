@@ -103,9 +103,23 @@ export default function PlaylistPage() {
     }
     
     // 4. Affichage du contenu (Succès)
-    const descriptionText = playlist.description 
-        ? playlist.description.replace(/<[^>]*>/g, '') 
-        : 'Aucune description fournie.';
+    // Sanitize description: use DOMParser in the browser (linear, safe) and
+    // fallback to a conservative regex that avoids catastrophic backtracking.
+    const stripHtml = (html) => {
+        if (!html) return '';
+        try {
+            if (typeof DOMParser !== 'undefined') {
+                const doc = new DOMParser().parseFromString(html, 'text/html');
+                return doc.body.textContent || '';
+            }
+        } catch (e) {
+            // fallthrough to regex fallback
+        }
+        // Fallback: remove tags with a safe pattern (no nested quantifiers)
+        return String(html).replace(/<\/?[^>]+(>|$)/g, '');
+    };
+
+    const descriptionText = stripHtml(playlist.description) || 'Aucune description fournie.';
 
     return (
         <section className="playlist-detail-container page-container" aria-labelledby="playlist-title">
