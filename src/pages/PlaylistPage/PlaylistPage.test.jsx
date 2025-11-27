@@ -111,8 +111,10 @@ describe('PlaylistPage', () => {
             expect(await screen.findByTestId(`track-item-${track.track.id}`)).toBeInTheDocument();
         }
 
-        await waitFor(() => expect(spotifyApi.fetchPlaylistById).toHaveBeenCalledTimes(1));
-        await waitFor(() => expect(spotifyApi.fetchPlaylistById).toHaveBeenCalledWith(tokenValue, 'playlist1'));
+        await waitFor(() => {
+            expect(spotifyApi.fetchPlaylistById).toHaveBeenCalledTimes(1);
+            expect(spotifyApi.fetchPlaylistById).toHaveBeenCalledWith(tokenValue, 'playlist1');
+        });
     });
 
     test('displays error message on API fetch failure', async () => {
